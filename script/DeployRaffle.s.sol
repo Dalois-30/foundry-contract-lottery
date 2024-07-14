@@ -12,7 +12,7 @@ contract DeployRaffle is Script {
         HelperConfig helperConfig = new HelperConfig();
         // local -> deploy mocks, get local config
         // sepolia -> get spolia config
-        HelperConfig.networkConfigs memory config = helperConfig.getConfig();
+        HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
 
         vm.startBroadcast();
         Raffle raffle = new Raffle(
