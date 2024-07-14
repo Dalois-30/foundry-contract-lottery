@@ -19,6 +19,7 @@ contract RaffleTest is Test {
         uint32 callbackGasLimit;
 
     address public PLAYER = makeAddr("player");
+    uint256 STARTING_PLAYER_BALANCE = 10 ether;
     
     function setUp() external {
         DeployRaffle deployer = new DeployRaffle();
@@ -30,9 +31,24 @@ contract RaffleTest is Test {
         gasLane = config.gasLane;
         callbackGasLimit = config.callbackGasLimit;
         subscriptionId = config.subscriptionId;
+
+        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
     }
 
     function testRaffleInitalizesInOpen() public view {
         assert (raffle.getRaffleState() == Raffle.RaffleState.OPEN);
     }
+
+
+    /*//////////////////////////////////////////////////////////////
+                              ENTER RAFFLE
+    //////////////////////////////////////////////////////////////*/
+    function testRaffleRevertsWhenYouDontPayEnoug() public {
+        // Arrange
+        vm.prank(PLAYER);
+        // Act / Assert
+        vm.expectRevert(Raffle.Raffle__SendMoreToEnterRaffle.selector);
+        raffle.enterRaffle();
+    }
+
 }
