@@ -43,7 +43,7 @@ contract RaffleTest is Test {
     /*//////////////////////////////////////////////////////////////
                               ENTER RAFFLE
     //////////////////////////////////////////////////////////////*/
-    function testRaffleRevertsWhenYouDontPayEnoug() public {
+    function testRaffleRevertsWhenYouDontPayEnough() public {
         // Arrange
         vm.prank(PLAYER);
         // Act / Assert
@@ -51,4 +51,13 @@ contract RaffleTest is Test {
         raffle.enterRaffle();
     }
 
+    function testRaffleRecordsPlayersWhenTheyEnter() public {
+        // Arrange
+        vm.prank(PLAYER);
+        // Act
+        raffle.enterRaffle{value: entranceFee}();
+        // Assert
+        address playerRecorded = raffle.getPlayer(0);
+        assertEq(playerRecorded, PLAYER);
+    }
 }
