@@ -9,7 +9,7 @@ import {Raffle} from "../../src/Raffle.sol";
 contract RaffleTest is Test {
     Raffle public raffle;
     HelperConfig public helperConfig;
-  
+
     uint256 entranceFee;
     uint256 interval;
     address vrfCoordinator;
@@ -18,7 +18,7 @@ contract RaffleTest is Test {
     uint32 callbackGasLimit;
 
     address public PLAYER = makeAddr("player");
-    uint256 STARTING_PLAYER_BALANCE = 10 ether;
+    uint256 STARTING_PLAYER_BALANCE = 10 ether; // balance
 
     event RaffleEntered(address indexed player);
     event WinnerPicked(address indexed player);
