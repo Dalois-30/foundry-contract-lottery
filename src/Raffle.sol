@@ -127,7 +127,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
         upkeepNeeded = timeHasPassed && isOpen && hasBalance && hasPlayers;
         return (upkeepNeeded, "");
         // We don't use the checkData in this example. The checkData is defined when the Upkeep was registered.
-    }
+    } // basic comment just for git
 
     // 1. Get a random number
     // 2. Use random number to pick a player
