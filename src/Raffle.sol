@@ -7,7 +7,7 @@
 // State variables
 // Events
 // Modifiers
-// Functions
+// Functions   
 
 // Layout of Functions:
 // constructor
