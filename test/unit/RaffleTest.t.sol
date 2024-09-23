@@ -5,6 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {DeployRaffle} from "../../script/DeployRaffle.s.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 import {Raffle} from "../../src/Raffle.sol";
+import {Vm} from "forge-std/Vm.sol";
 
 contract RaffleTest is Test {
     Raffle public raffle;
@@ -145,5 +146,25 @@ contract RaffleTest is Test {
             abi.encodeWithSelector(Raffle.Raffle__UpkeepNotNeeded.selector, currentBalance, numPlayers, rState)
         );
         raffle.performUpkeep("");
+    }
+
+    // What if we need to get data from emitted events in ours tests?
+    function testPerformUpkeepUpdatesRafflesStateAndEmitsRequestId() public {
+        // Arrange
+        vm.prank(PLAYER);
+        raffle.enterRaffle{value: entranceFee}();
+        vm.warp(block.timestamp + interval + 1); // Update the time
+        vm.roll(block.number + 1); // update the block
+
+        // Act
+        vm.recordLogs(); // record logs and all events
+        raffle.performUpkeep(""); 
+        Vm.Log[] memory entries = vm.getRecordedLogs(); // save logs inside the entries table
+        bytes32 requestId = entries[1].topics[1];
+
+        // Assert
+        Raffle.RaffleState raffleState = raffle.getRaffleState();
+        assert(uint256(requestId) > 0);
+        assert(uint256(raffleState) == 1);
     }
 }
