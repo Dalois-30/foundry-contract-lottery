@@ -6,6 +6,7 @@ import {DeployRaffle} from "../../script/DeployRaffle.s.sol";
 import {HelperConfig} from "../../script/HelperConfig.s.sol";
 import {Raffle} from "../../src/Raffle.sol";
 import {Vm} from "forge-std/Vm.sol";
+import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
 
 contract RaffleTest is Test {
     Raffle public raffle;
@@ -148,14 +149,16 @@ contract RaffleTest is Test {
         raffle.performUpkeep("");
     }
 
-    // What if we need to get data from emitted events in ours tests?
-    function testPerformUpkeepUpdatesRafflesStateAndEmitsRequestId() public {
-        // Arrange
+    modifier raffleEntered() {
         vm.prank(PLAYER);
         raffle.enterRaffle{value: entranceFee}();
         vm.warp(block.timestamp + interval + 1); // Update the time
         vm.roll(block.number + 1); // update the block
+        _;
+    }
 
+    // What if we need to get data from emitted events in ours tests?
+    function testPerformUpkeepUpdatesRafflesStateAndEmitsRequestId() public raffleEntered {
         // Act
         vm.recordLogs(); // record logs and all events
         raffle.performUpkeep(""); 
@@ -166,5 +169,14 @@ contract RaffleTest is Test {
         Raffle.RaffleState raffleState = raffle.getRaffleState();
         assert(uint256(requestId) > 0);
         assert(uint256(raffleState) == 1);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                           FULFILLRANDOMWORDS
+    //////////////////////////////////////////////////////////////*/
+    function testFulfillrandomWordsCanOnlyBeCalledAfterPerformUpkeep(uint256 randomRequestId) public raffleEntered {
+        // Arrange / Act / Assert
+        vm.expectRevert(VRFCoordinatorV2_5Mock.InvalidRequest.selector);
+        VRFCoordinatorV2_5Mock(vrfCoordinator).fulfillRandomWords(randomRequestId, address(raffle));
     }
 }
