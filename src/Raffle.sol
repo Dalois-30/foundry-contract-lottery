@@ -34,7 +34,7 @@ import {console} from "forge-std/console.sol";
  */
 contract Raffle is VRFConsumerBaseV2Plus {
     /**
-     * Errors
+     * Errors variables
      */
     error Raffle__SendMoreToEnterRaffle();
     error Raffle__TransferFailed();
