@@ -1,4 +1,4 @@
-// Layout of Contract:
+// Layout of Contract: 
 // version
 // imports
 // errors
